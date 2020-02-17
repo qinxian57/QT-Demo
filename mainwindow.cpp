@@ -4,6 +4,9 @@
 #include <QIcon>
 #include <QStyleFactory>
 #include <QFileDialog>
+#include <QPushButton>
+#include <QLabel>
+#include <QPointer>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -21,10 +24,13 @@ MainWindow::MainWindow(QWidget *parent) :
     //dock状态，显示/隐藏，对应true/false
     mDockStatus = true;
 
-    //
+    //Tree Widget
     initTree();
     //Tree设置右键菜单
     initTreeMenu();
+
+    //List Widget
+    initList();
 
 
 
@@ -41,14 +47,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+//    ui->treeFiles->clear();
+//    ui->listWidget->clear();
     delete ui;
 }
 
 void MainWindow::initTrayIcon()
 {
     //新建QSystemTrayIcon对象,
-    //mSysTrayIcon = new QSystemTrayIcon(this);
-    mSysTrayIcon = std::make_shared<QSystemTrayIcon>(this);
+    mSysTrayIcon = new QSystemTrayIcon(this);
 
     //将icon设到QSystemTrayIcon对象中
     mSysTrayIcon->setIcon(QIcon(":/images/tray_icon.png"));
@@ -56,7 +63,7 @@ void MainWindow::initTrayIcon()
     mSysTrayIcon->setToolTip("Demo");
 
     //给QSystemTrayIcon添加槽函数
-    connect(mSysTrayIcon.get(), SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason)));
+    connect(mSysTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason)));
 
     //建立托盘操作的菜单
     createTrayActions();
@@ -64,21 +71,21 @@ void MainWindow::initTrayIcon()
 
 void MainWindow::createTrayActions()
 {
-    mMenu = std::make_shared<QMenu>(this);
+    mMenu = new QMenu(this);
 
     //新增菜单项---显示主界面
-    mShowMainAction = std::make_shared<QAction>("显示", this);
-    connect(mShowMainAction.get(),SIGNAL(triggered()),this,SLOT(on_showMainAction()));
-    mMenu->addAction(mShowMainAction.get());
+    mShowMainAction = new QAction("显示", this);
+    connect(mShowMainAction,SIGNAL(triggered()),this,SLOT(on_showMainAction()));
+    mMenu->addAction(mShowMainAction);
 
     //增加分隔符
     mMenu->addSeparator();
 
     //新增菜单项---退出程序
-    mExitAppAction = std::make_shared<QAction>("关闭", this);
-    connect(mExitAppAction.get(),SIGNAL(triggered()),this,SLOT(on_exitAppAction()));
+    mExitAppAction = new QAction("关闭", this);
+    connect(mExitAppAction,SIGNAL(triggered()),this,SLOT(on_exitAppAction()));
     mExitAppAction->setIcon(QIcon(":/images/close.png"));
-    mMenu->addAction(mExitAppAction.get());
+    mMenu->addAction(mExitAppAction);
 
 //    //等宽字体12号
 //    QFont font("consolas", 12, QFont::Normal);
@@ -86,7 +93,7 @@ void MainWindow::createTrayActions()
 //    mMenu->setStyle(QStyleFactory::create("fusion"));
 
     //把QMenu赋给QSystemTrayIcon对象
-    mSysTrayIcon->setContextMenu(mMenu.get());
+    mSysTrayIcon->setContextMenu(mMenu);
 }
 
 void MainWindow::closeEvent ( QCloseEvent * e )
@@ -129,19 +136,19 @@ void MainWindow::on_exitAppAction()
 
 void MainWindow::initTreeMenu()
 {
-    mTreeMenu = std::make_shared<QMenu>(this);
+    mTreeMenu = new QMenu(this);
 
-    mAddFolderAction = std::make_shared<QAction>("添加目录", this);
-    connect(mAddFolderAction.get(),SIGNAL(triggered()),this, SLOT(on_actAddFolder()));
-    mTreeMenu->addAction(mAddFolderAction.get());
+    mAddFolderAction = new QAction("添加目录", this);
+    connect(mAddFolderAction,SIGNAL(triggered()),this, SLOT(on_actAddFolder()));
+    mTreeMenu->addAction(mAddFolderAction);
 
-    mAddFileAction = std::make_shared<QAction>("添加文件", this);
-    connect(mAddFileAction.get(),SIGNAL(triggered()),this, SLOT(on_actAddFiles()));
-    mTreeMenu->addAction(mAddFileAction.get());
+    mAddFileAction = new QAction("添加文件", this);
+    connect(mAddFileAction,SIGNAL(triggered()),this, SLOT(on_actAddFiles()));
+    mTreeMenu->addAction(mAddFileAction);
 
-    mDltNodeAction = std::make_shared<QAction>("删除节点", this);
-    connect(mDltNodeAction.get(),SIGNAL(triggered()),this, SLOT(on_actDeleteItem()));
-    mTreeMenu->addAction(mDltNodeAction.get());
+    mDltNodeAction = new QAction("删除节点", this);
+    connect(mDltNodeAction,SIGNAL(triggered()),this, SLOT(on_actDeleteItem()));
+    mTreeMenu->addAction(mDltNodeAction);
 
     //给控件设置上下文菜单策略
     ui->treeFiles->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -201,7 +208,8 @@ void MainWindow::initTree()
     ui->treeFiles->clear();//清除目录树所有节点
     QIcon icon;
     icon.addFile(":/images/tray_icon.png"); //设置ICON的图标
-    QTreeWidgetItem*  item=new QTreeWidgetItem(MainWindow::itTopItem); //新建节点时设定类型为 itTopItem
+    QTreeWidgetItem *item=new QTreeWidgetItem(MainWindow::itTopItem); //新建节点时设定类型为 itTopItem
+
     //item->setIcon(MainWindow::colItem,icon); //设置第1列的图标
     item->setText(MainWindow::colItem,"图片管理"); //设置第1列的文字
     item->setText(MainWindow::colItemType,"type=itTopItem");  //设置第2列的文字
@@ -228,8 +236,7 @@ void MainWindow::addFolderItem(QTreeWidgetItem *parItem, QString dirName)
     //添加一个目录节点
     //QIcon   icon(":/images/icons/open3.bmp");//设置ICON的图标
     QString NodeText=getFinalFolderName(dirName); //从一个完整目录名称里，获得最后的文件夹名称
-    QTreeWidgetItem *item; //节点
-    item=new QTreeWidgetItem(MainWindow::itGroupItem); //新建节点, 设定type为 itGroupItem
+    QTreeWidgetItem *item=new QTreeWidgetItem(MainWindow::itGroupItem); //新建节点, 设定type为 itGroupItem
     //item->setIcon(colItem,icon); //设置图标
     item->setText(colItem,NodeText); //最后的文件夹名称，第1列
     item->setText(colItemType,"type=itGroupItem"); //完整目录名称，第2列
@@ -238,7 +245,6 @@ void MainWindow::addFolderItem(QTreeWidgetItem *parItem, QString dirName)
     item->setData(colItem,Qt::UserRole,QVariant(dirName)); //设置角色为Qt::UserRole的Data,存储完整目录名称
     parItem->addChild(item); //在父节点下面添加子节点
 
-    //addImageItem(item, "tray_icon.png");
 }
 QString MainWindow::getFinalFolderName(const QString &fullPathName)
 {
@@ -272,8 +278,7 @@ void MainWindow::addImageItem(QTreeWidgetItem *parItem, QString aFilename)
     //添加一个图片文件节点
     QIcon   icon(":/images/tray_icon.png");//ICON的图标
     QString NodeText=getFinalFolderName(aFilename); //获得最后的文件名称
-    QTreeWidgetItem *item; //节点
-    item=new QTreeWidgetItem(MainWindow::itImageItem); //新建节点时设定类型为 itImageItem
+    QTreeWidgetItem *item = new QTreeWidgetItem(MainWindow::itImageItem);
     item->setIcon(colItem,icon); //设置图标
     item->setText(colItem,NodeText); //最后的文件夹名称
     //item->setText(colSecond,"type=itImageItem; data="+aFilename); //完整目录名称
@@ -294,11 +299,24 @@ void MainWindow::on_actDeleteItem()
 }
 
 void MainWindow::displayImage(QTreeWidgetItem *item)
-{//显示图片,节点item存储的图片文件名
-    QString filename=item->data(colItem,Qt::UserRole).toString();//获取节点data里存的文件名
-    //LabFileName->setText(filename);
-    curPixmap.load(filename); //从文件载入图片
-    //on_actZoomFitH_triggered(); //自动适应高度显示
+{
+    QString filename = item->data(colItem,Qt::UserRole).toString();//获取节点data里存的文件名
+
+    QListWidgetItem *img_item = new QListWidgetItem(ui->listWidget);
+    img_item->setIcon(QIcon(":/images/tray_icon.png"));
+    img_item->setText(filename);
+    //设置item项中的文字位置
+    img_item->setTextAlignment(Qt::AlignLeft);
+    img_item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
+
+    img_item->setCheckState(Qt::Checked); //设置为选中状态
+
+
+//    //显示图片,节点item存储的图片文件名
+//    QString filename=item->data(colItem,Qt::UserRole).toString();//获取节点data里存的文件名
+//    //LabFileName->setText(filename);
+//    curPixmap.load(filename); //从文件载入图片
+//    //on_actZoomFitH_triggered(); //自动适应高度显示
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -320,4 +338,146 @@ void MainWindow::on_actionDock_triggered(bool checked)
         ui->dockWidget->show();
         mDockStatus = true;
     }
+}
+
+void MainWindow::initList()
+{
+    //ui->listWidget->resize(200,300);
+    //ui->listWidget->setFixedWidth(300);
+
+
+    //设置item图标大小
+    ui->listWidget->setIconSize(QSize(30,30));
+
+    QListWidgetItem *add_item = new QListWidgetItem(ui->listWidget);
+    add_item->setIcon(QIcon(":/images/tray_icon.png"));
+    add_item->setText(tr("Add"));
+    //设置item项中的文字位置
+    add_item->setTextAlignment(Qt::AlignHCenter);
+    add_item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+    //ui->listWidget->addItem(add_item);
+    //delete add_item;
+
+    //设置viewModel，来确定使用不同的视图进行显示
+    //使ListWidgetItem中的图标在上，文字在下
+    //ui->listWidget->setViewMode(QListView::IconMode);
+    //ui->listWidget->setViewMode(QListWidget::IconMode);  //这样的形式也可以
+    //ui->listWidget->setViewMode(QListView::ListMode);
+
+
+    //改变item大小，使用QListWidgetItem::setSizeHint()
+    //add_item->setSizeHint(QSize(60,60));
+
+
+    //设置ListWidget可以选择多个item
+    //ui->listWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+
+    //有两种方法在ListWidget中添加item
+    //一种在构造item的时候，指定其父Widget
+    QListWidgetItem *cubby_item = new QListWidgetItem(QIcon(":/images/tray_icon.png"),
+                                                      tr("Cubby"),ui->listWidget);
+    //第二种方法是在构造完item后，使用QListWidget::additem()来添加item
+    QListWidgetItem *dropbox_item = new QListWidgetItem();
+    dropbox_item->setIcon(QIcon(":/images/tray_icon.png"));
+    dropbox_item->setText(tr("Dropbox"));
+    ui->listWidget->addItem(dropbox_item);
+
+
+    //向QListWidget中指定的位置插入itemm，使用QListWidget::addItem()
+    QListWidgetItem *google_item = new QListWidgetItem(QIcon(":/images/tray_icon.png"),
+                                                         tr("Google"));
+    ui->listWidget->insertItem(1,google_item);
+
+
+    //**使用QListWidget::takeItem(int index)来删除表中的某一项
+    //**第二句的内存删除是一定要的，根据Qt文档，takeItem只是在视图（视觉）上实现了移除此项，但其实并没有释放内存
+    //QListWidgetItem *deletedItem = ui->listWidget->takeItem(0);
+    //delete deletedItem;
+
+    //**removeItemWidget这个函数可以同时移除项和释放内存
+    //ui->listWidget->removeItemWidget(add_item);
+
+    //**打开和关闭item是否可以编辑,默认不可编辑
+    //**使用QListWidget::openPersistenEditor(QListWidgetItem*)和
+    //**QListWidget::closePersistentEditor(QListWidgetItem*)
+    //ui->listWidget->openPersistentEditor(cubby_item);
+
+
+    //设置当前的item是第几行
+    //初始化ListWidget显示时，指向哪一行
+    ui->listWidget->setCurrentRow(1);
+
+    //设置单元项不可拖动，（Static、Free、Snap）
+    ui->listWidget->setMovement(QListView::Static);
+    //拖动item，进行复制
+    //ui->listWidget->setMovement(QListWidget::Free);
+
+    //设置垂直滚动条显示方式（ScrollBarAsNeeded：按需显示，ScrollBarAlwaysOff：隐藏，ScrollBarAlwaysOn：常显）
+    ui->listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+
+    //设置ListWidget是否可以自动排序,默认是false
+    ui->listWidget->setSortingEnabled(false);
+
+
+    //设置QLisView大小改变时，图标的调整模式，默认是固定的，可以改成自动调整
+    //ui->listWidget->setResizeMode(QListView::Adjust);
+
+
+
+    QListWidgetItem *computer_item = new QListWidgetItem();
+    QString str(tr("Computer"));
+    computer_item->setData(Qt::DisplayRole,str);
+    computer_item->setIcon(QIcon(":/images/tray_icon.png"));
+    ui->listWidget->addItem(computer_item);
+
+
+    //auto button = new QPushButton>(tr("Button"));
+    QPointer<QPushButton> button = new QPushButton();
+    QListWidgetItem *button_item = new QListWidgetItem();
+    ui->listWidget->addItem(button_item);
+    //实现替换，自定义item
+    ui->listWidget->setItemWidget(button_item,button);
+
+    //使用QListWidget::count()来统计ListWidget中总共的item数目
+    //int item_count = ui->listWidget->count();
+    //qDebug()<<item_count;
+
+    //加入多个项，项是预先放在QStringList容器中的,或者使用临时容器存放,示例如下:
+    //void addItems(const QStringList &);
+    ui->listWidget->addItems(QStringList()<<QString:: fromUtf8("北京")<<QString::fromUtf8("上海")<<QString::fromUtf8("杭州"));
+
+    //设置样式，直接在函数中设置
+    ui->listWidget->setStyleSheet("QListWidget{border:1px solid gray; color:black; }"
+                               "QListWidget::Item{padding-top:20px; padding-bottom:4px; }"
+                               "QListWidget::Item:hover{background:skyblue; }"
+                               "QListWidget::item:selected{background:lightgray; color:red; }"
+                               "QListWidget::item:selected:!active{border-width:0px; background:lightgreen; }"
+                               );
+
+
+    //int currentRow(); //返回当前选择项的行.从0开始，可以看成是当前项在QListWidget中的下标.
+
+
+    //void sortItems(Qt::SortOrder); //设置项排序的方式.默认是从AAA-ZZZ排序.(当使用此函数后，自动激活排序).
+    //第一种:Qt::DescendingOrder: 从ZZZ到AAA排序.
+    //第二种:Qt::AscendingOrder: 从AAA到ZZZ排序.
+    //ui.listWidget->sortItems(Qt::DescendingOrder);
+
+
+    //QListWidgetItem* item(int); //返回指定下标的项的指针.
+
+    //int row(QListWidgetItem*); //返回指定项的下标.
+
+    //清空QListWidget对象的所有内容.
+    //void clear();
+
+    //QListWIdget信号
+    //void itemChanged(QListWidgetItem * item); //项的内容被改变发出信号.
+    //void itemClicked(QListWidgetItem * item); //项被点击发出信号.
+    //void itemSelectionChanged(); //项的选择清空发生改变发出信号.
+
+
+
 }

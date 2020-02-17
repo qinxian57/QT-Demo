@@ -11,6 +11,8 @@
 #include <QAction>
 
 #include <QTreeWidgetItem>
+#include <QListWidgetItem>
+#include <QPointer>
 
 namespace Ui {
 class MainWindow;
@@ -27,15 +29,15 @@ public:
     ~MainWindow();
 
 public:
-    std::shared_ptr<QSystemTrayIcon> mSysTrayIcon;
-    std::shared_ptr<QMenu> mMenu;
-    std::shared_ptr<QAction> mShowMainAction;
-    std::shared_ptr<QAction> mExitAppAction;
+    QPointer<QSystemTrayIcon> mSysTrayIcon;
+    QPointer<QMenu> mMenu;
+    QPointer<QAction> mShowMainAction;
+    QPointer<QAction> mExitAppAction;
 
-    std::shared_ptr<QMenu> mTreeMenu;
-    std::shared_ptr<QAction> mAddFolderAction;
-    std::shared_ptr<QAction> mAddFileAction;
-    std::shared_ptr<QAction> mDltNodeAction;
+    QPointer<QMenu> mTreeMenu;
+    QPointer<QAction> mAddFolderAction;
+    QPointer<QAction> mAddFileAction;
+    QPointer<QAction> mDltNodeAction;
 
     void initTrayIcon();
     void createTrayActions();
@@ -81,6 +83,8 @@ private:
     void    addImageItem(QTreeWidgetItem *parItem,QString aFilename);//添加一个图片节点
     void    displayImage(QTreeWidgetItem *item); //显示一个图片节点的图片
     void    changeItemCaption(QTreeWidgetItem *item); //遍历改变节点标题
+
+    void    initList();
 };
 
 #endif // MAINWINDOW_H
