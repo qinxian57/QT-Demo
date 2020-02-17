@@ -1,5 +1,6 @@
 # QT-Demo
 
-* dock demo
 * trayICO demo
-* list demo
+* dock widget demo
+* tree widget demo
+* list widget demo
