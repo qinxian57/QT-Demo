@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>2000</width>
+    <height>1000</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>2000</width>
+    <height>1000</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>2000</width>
+    <height>1000</height>
+   </size>
+  </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Demo</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 10pt &quot;Consolas&quot;;</string>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonFollowStyle</enum>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>241</width>
+      <height>391</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QToolBox" name="toolBox">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="page_1">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>239</width>
+          <height>161</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>Page 1</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="0">
+          <widget class="QToolButton" name="tBtnSelNone">
+           <property name="text">
+            <string>全不选</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QToolButton" name="tBtnSelInvs">
+           <property name="text">
+            <string>反选</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QToolButton" name="tBtnSelAll">
+           <property name="text">
+            <string>全选</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QToolButton" name="tBtnSelectItem">
+           <property name="text">
+            <string>项选择</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="listWidget">
+       <item>
+        <property name="text">
+         <string>新建项目</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>新建项目</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>新建项目</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>新建项目</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>新建项目</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>新建项目</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>2000</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionActive"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuTool">
+    <property name="title">
+     <string>Tool</string>
+    </property>
+    <addaction name="actionConfig"/>
+    <addaction name="separator"/>
+    <addaction name="actionDetailLog"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionLog"/>
+    <addaction name="separator"/>
+    <addaction name="actionDock"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuTool"/>
+   <addaction name="menuView"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>24</width>
+     <height>35</height>
+    </size>
+   </property>
+   <property name="sizeIncrement">
+    <size>
+     <width>400</width>
+     <height>400</height>
+    </size>
+   </property>
+   <property name="baseSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::CustomContextMenu</enum>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>TreeWidget</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <property name="font">
+     <font>
+      <family>Consolas</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::DefaultContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid gray;</string>
+    </property>
+    <widget class="QTreeWidget" name="treeFiles">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>289</width>
+       <height>371</height>
+      </rect>
+     </property>
+     <property name="baseSize">
+      <size>
+       <width>300</width>
+       <height>500</height>
+      </size>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <column>
+      <property name="text">
+       <string>节点</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>节点类型</string>
+      </property>
+     </column>
+    </widget>
+   </widget>
+  </widget>
+  <action name="actionActive">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Active</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionConfig">
+   <property name="text">
+    <string>Config</string>
+   </property>
+  </action>
+  <action name="actionLog">
+   <property name="text">
+    <string>Log</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionDetailLog">
+   <property name="text">
+    <string>DetailLog</string>
+   </property>
+  </action>
+  <action name="actionDock">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dock</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
