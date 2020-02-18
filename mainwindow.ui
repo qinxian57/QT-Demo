@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2000</width>
-    <height>1000</height>
+    <width>1000</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>2000</width>
-    <height>1000</height>
+    <width>1000</width>
+    <height>500</height>
    </size>
   </property>
   <property name="baseSize">
    <size>
-    <width>2000</width>
-    <height>1000</height>
+    <width>1000</width>
+    <height>500</height>
    </size>
   </property>
   <property name="acceptDrops">
@@ -57,7 +57,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>2000</width>
+     <width>1000</width>
      <height>21</height>
     </rect>
    </property>
@@ -105,8 +105,8 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>24</width>
-     <height>35</height>
+     <width>72</width>
+     <height>44</height>
     </size>
    </property>
    <property name="sizeIncrement">
@@ -125,7 +125,7 @@
     <enum>Qt::CustomContextMenu</enum>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>

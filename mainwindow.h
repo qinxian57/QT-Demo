@@ -42,6 +42,7 @@ public:
     void initTrayIcon();
     void createTrayActions();
     void closeEvent ( QCloseEvent * e );
+    void changeEvent(QEvent * event);
     void initTreeMenu();
 
 private slots:
@@ -56,6 +57,7 @@ private slots:
 
     void on_treeFiles_customContextMenuRequested(QPoint pos);
     void on_treeFiles_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+    void on_dockWidget_closeEvent(QCloseEvent * event);
 
     void    on_actAddFolder();
     void    on_actAddFiles();

@@ -47,8 +47,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-//    ui->treeFiles->clear();
-//    ui->listWidget->clear();
+    ui->treeFiles->clear();
+    ui->listWidget->clear();
     delete ui;
 }
 
@@ -104,11 +104,24 @@ void MainWindow::closeEvent ( QCloseEvent * e )
     mSysTrayIcon->show();
 }
 
+void MainWindow::changeEvent(QEvent *event)
+{
+    if(event->type()!=QEvent::WindowStateChange) return;
+    if(this->windowState()==Qt::WindowMinimized)
+    {
+        //隐藏窗口到托盘
+        event->ignore();
+        this->hide();
+        mSysTrayIcon->show();
+    }
+}
+
 void MainWindow::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason)
 {
     switch(reason){
     case QSystemTrayIcon::DoubleClick:
         //双击托盘图标，显示主程序窗口
+        this->activateWindow();
         this->show();
         break;
     default:
@@ -122,8 +135,8 @@ void MainWindow::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reaso
 */
 void MainWindow::on_showMainAction()
 {
-    this->show();
     this->activateWindow();
+    this->show();
 }
 
 /*
@@ -168,6 +181,11 @@ void MainWindow::on_treeFiles_customContextMenuRequested(QPoint pos)
     //QTreeWidgetItem* curItem = ui->treeFiles->itemAt(pos);  //获取当前被点击的节点
 
     mTreeMenu->exec(QCursor::pos());//弹出右键菜单，菜单位置为光标位置
+}
+
+void MainWindow::on_dockWidget_closeEvent(QCloseEvent * event)
+{
+    ui->actionDock->trigger();
 }
 
 void MainWindow::on_treeFiles_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
