@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QString>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -142,8 +143,8 @@ void MainWindow::on_showMainAction()
 */
 void MainWindow::on_exitAppAction()
 {
-    QString dlgTitle = "退出程序";
-    QString strInfo = "是否确定要关闭程序？";
+    QString dlgTitle = "提示";
+    QString strInfo = tr("是否确定要关闭程序？");
     QMessageBox::StandardButton defaultBtn = QMessageBox::NoButton; //缺省按钮
     QMessageBox::StandardButton result;//返回选择的按钮
     result=QMessageBox::question(this, dlgTitle, strInfo,
