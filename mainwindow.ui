@@ -125,10 +125,10 @@
     <enum>Qt::CustomContextMenu</enum>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::DockWidgetClosable</set>
    </property>
    <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+    <set>Qt::LeftDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>TreeWidget</string>

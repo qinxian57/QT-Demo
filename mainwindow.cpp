@@ -1,12 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QIcon>
 #include <QStyleFactory>
 #include <QFileDialog>
 #include <QPushButton>
-#include <QLabel>
-#include <QPointer>
+#include <QMessageBox>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -21,8 +19,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //左侧停靠窗口 Dock Widget, Tree Widget, List Widget
     this->setCentralWidget(ui->listWidget);
     ui->dockWidget->setWidget(ui->treeFiles);
-    //dock状态，显示/隐藏，对应true/false
-    mDockStatus = true;
 
     //Tree Widget
     initTree();
@@ -61,6 +57,8 @@ void MainWindow::initTrayIcon()
     mSysTrayIcon->setIcon(QIcon(":/images/tray_icon.png"));
     //当鼠标移动到托盘上的图标时，会显示此处设置的内容
     mSysTrayIcon->setToolTip("Demo");
+    //设置父组件，否则程序退出时托盘图标不立即消失
+    mSysTrayIcon->setParent(this);
 
     //给QSystemTrayIcon添加槽函数
     connect(mSysTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason)));
@@ -107,6 +105,7 @@ void MainWindow::closeEvent ( QCloseEvent * e )
 void MainWindow::changeEvent(QEvent *event)
 {
     if(event->type()!=QEvent::WindowStateChange) return;
+    //最小化事件
     if(this->windowState()==Qt::WindowMinimized)
     {
         //隐藏窗口到托盘
@@ -129,7 +128,6 @@ void MainWindow::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reaso
     }
 }
 
-
 /*
 * 当在系统托盘点击菜单内的显示主界面操作
 */
@@ -144,7 +142,20 @@ void MainWindow::on_showMainAction()
 */
 void MainWindow::on_exitAppAction()
 {
-    qApp->exit(0);
+    QString dlgTitle = "退出程序";
+    QString strInfo = "是否确定要关闭程序？";
+    QMessageBox::StandardButton defaultBtn = QMessageBox::NoButton; //缺省按钮
+    QMessageBox::StandardButton result;//返回选择的按钮
+    result=QMessageBox::question(this, dlgTitle, strInfo,
+                      QMessageBox::Yes|QMessageBox::No |QMessageBox::Cancel,
+                      defaultBtn);
+    if (result==QMessageBox::Yes)
+        qApp->exit(0);
+    //else if(result==QMessageBox::No)
+
+    //else if(result==QMessageBox::Cancel)
+
+    //else
 }
 
 void MainWindow::initTreeMenu()
@@ -181,11 +192,6 @@ void MainWindow::on_treeFiles_customContextMenuRequested(QPoint pos)
     //QTreeWidgetItem* curItem = ui->treeFiles->itemAt(pos);  //获取当前被点击的节点
 
     mTreeMenu->exec(QCursor::pos());//弹出右键菜单，菜单位置为光标位置
-}
-
-void MainWindow::on_dockWidget_closeEvent(QCloseEvent * event)
-{
-    ui->actionDock->trigger();
 }
 
 void MainWindow::on_treeFiles_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
@@ -350,12 +356,15 @@ void MainWindow::on_actionDock_triggered(bool checked)
 {
     if(!checked){
         ui->dockWidget->hide();
-        mDockStatus = false;
     }
     else{
         ui->dockWidget->show();
-        mDockStatus = true;
     }
+}
+
+void MainWindow::on_dockWidget_visibilityChanged(bool visible)
+{
+    ui->actionDock->setChecked(visible);
 }
 
 void MainWindow::initList()
@@ -499,3 +508,5 @@ void MainWindow::initList()
 
 
 }
+
+

@@ -2,17 +2,20 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMessageBox>
-#include <QtEvents>
-#include <QtDebug>
 
+#include <QPointer>
+#include <QtEvents>
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QAction>
+#include <QIcon>
 
 #include <QTreeWidgetItem>
 #include <QListWidgetItem>
-#include <QPointer>
+
+
+#include <QMessageBox>
+#include <QtDebug>
 
 namespace Ui {
 class MainWindow;
@@ -54,20 +57,22 @@ private slots:
     void on_actionActive_triggered();
 
     void on_actionDock_triggered(bool checked);
+    void on_dockWidget_visibilityChanged(bool visible);
 
     void on_treeFiles_customContextMenuRequested(QPoint pos);
     void on_treeFiles_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
-    void on_dockWidget_closeEvent(QCloseEvent * event);
+
 
     void    on_actAddFolder();
     void    on_actAddFiles();
     void    on_actDeleteItem();
 
+
+
 private:
     Ui::MainWindow *ui;
 
 private:
-    bool mDockStatus;//dock widget显示状态
 
     //枚举类型treeItemType， 用于创建 QTreeWidgetItem 时作为节点的type, 自定义类型必须大于1000
     //itTopItem 顶层节点;  itGroupItem 组节点； itImageItem 图片
