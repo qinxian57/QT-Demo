@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QStyleFactory>
@@ -6,6 +6,9 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QString>
+#include <QProcess>
+#include <QHBoxLayout>
+
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -18,8 +21,20 @@ MainWindow::MainWindow(QWidget *parent) :
     initTrayIcon();
 
     //左侧停靠窗口 Dock Widget, Tree Widget, List Widget
-    this->setCentralWidget(ui->listWidget);
+    this->setCentralWidget(ui->tabWidget);
     ui->dockWidget->setWidget(ui->treeFiles);
+
+    QWidget * widget=new QWidget(ui->listWidget);               //待放置到tabWidget中的控件
+
+                      QHBoxLayout *layout=new QHBoxLayout();     //包裹控件的布局
+
+                      layout->setContentsMargins(0,0,0,0);
+
+                      layout->addWidget(widget);
+
+
+                     ui->tab_1->setLayout(layout);
+
 
     //Tree Widget
     initTree();
@@ -29,17 +44,19 @@ MainWindow::MainWindow(QWidget *parent) :
     //List Widget
     initList();
 
-
-
-
+    const QString &appName = "Demo1.exe";
+    if(CheckAppStatus(appName)){
+        KillApp(appName);
+    }
+    else{
+        StartApp(appName);
+    }
+    //qDebug(u8"退出");
 
 //    //更改窗口菜单栏样式
 //    QFont font("consolas", 10, QFont::Normal);
 //    ui->menuBar->setFont(font);
 //    ui->menuBar->setStyle(QStyleFactory::create("fusion"));
-
-
-
 }
 
 MainWindow::~MainWindow()
@@ -47,6 +64,58 @@ MainWindow::~MainWindow()
     ui->treeFiles->clear();
     ui->listWidget->clear();
     delete ui;
+}
+
+bool MainWindow::CheckAppStatus(const QString &appName)
+{
+#ifdef Q_OS_WIN      //表示如果在windows下
+    QProcess process;
+    process.start("TASKLIST" ,QStringList()<<"/FI"<<"imagename eq " +appName);   //执行tasklist程序
+    process.waitForFinished(5000);    //阻塞5秒等待tasklist程序执行完成，超过五秒则直接返回
+    QString outputStr = QString::fromLocal8Bit(process.readAllStandardOutput()); //把tasklist程序读取到的进程信息输出到字符串中
+    if(outputStr.contains(appName))
+    {
+        process.close(); //用完记得把process关闭了，否则如果重新调用这个函数可以会失败
+        return true;
+    }
+    else
+    {
+
+        process.close();
+        return false;
+    }
+#endif
+}
+
+void MainWindow::StartApp(const QString &appName)       //name可以是程序名也可以程序所在的完整路径（如：C:\myapp.exe)
+
+{
+
+#ifdef Q_OS_WIN
+
+    QProcess process;
+    process.start(QString("\"%1\"").arg(appName));
+    process.close();
+
+#endif
+
+}
+
+void MainWindow::KillApp(const QString& appName)
+{
+
+#ifdef Q_OS_WIN
+    QProcess process;
+    QString command="TASKKILL /IM " + appName + " /F";
+    int result = process.execute(command);                 //execute执行后会一直阻塞到返回外部程序退出的代码，比如无法关闭会返回-2
+    process.close();
+
+    if(-2 == result){
+        QMessageBox::information(this, u8"提示", appName + u8" 无法关闭");
+    }
+
+#endif
+
 }
 
 void MainWindow::initTrayIcon()
@@ -73,7 +142,7 @@ void MainWindow::createTrayActions()
     mMenu = new QMenu(this);
 
     //新增菜单项---显示主界面
-    mShowMainAction = new QAction("显示", this);
+    mShowMainAction = new QAction(u8"显示", this);
     connect(mShowMainAction,SIGNAL(triggered()),this,SLOT(on_showMainAction()));
     mMenu->addAction(mShowMainAction);
 
@@ -81,7 +150,7 @@ void MainWindow::createTrayActions()
     mMenu->addSeparator();
 
     //新增菜单项---退出程序
-    mExitAppAction = new QAction("关闭", this);
+    mExitAppAction = new QAction(u8"关闭", this);
     connect(mExitAppAction,SIGNAL(triggered()),this,SLOT(on_exitAppAction()));
     mExitAppAction->setIcon(QIcon(":/images/close.png"));
     mMenu->addAction(mExitAppAction);
@@ -121,8 +190,7 @@ void MainWindow::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reaso
     switch(reason){
     case QSystemTrayIcon::DoubleClick:
         //双击托盘图标，显示主程序窗口
-        this->activateWindow();
-        this->show();
+        on_showMainAction();
         break;
     default:
         break;
@@ -134,8 +202,10 @@ void MainWindow::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reaso
 */
 void MainWindow::on_showMainAction()
 {
-    this->activateWindow();
+    //this->activateWindow();
+
     this->show();
+    this->setWindowState(Qt::WindowActive);
 }
 
 /*
@@ -143,8 +213,8 @@ void MainWindow::on_showMainAction()
 */
 void MainWindow::on_exitAppAction()
 {
-    QString dlgTitle = "提示";
-    QString strInfo = tr("是否确定要关闭程序？");
+    QString dlgTitle = u8"提示";
+    QString strInfo = u8"是否确定要关闭程序？";
     QMessageBox::StandardButton defaultBtn = QMessageBox::NoButton; //缺省按钮
     QMessageBox::StandardButton result;//返回选择的按钮
     result=QMessageBox::question(this, dlgTitle, strInfo,
@@ -163,15 +233,15 @@ void MainWindow::initTreeMenu()
 {
     mTreeMenu = new QMenu(this);
 
-    mAddFolderAction = new QAction("添加目录", this);
+    mAddFolderAction = new QAction(u8"添加目录", this);
     connect(mAddFolderAction,SIGNAL(triggered()),this, SLOT(on_actAddFolder()));
     mTreeMenu->addAction(mAddFolderAction);
 
-    mAddFileAction = new QAction("添加文件", this);
+    mAddFileAction = new QAction(u8"添加文件", this);
     connect(mAddFileAction,SIGNAL(triggered()),this, SLOT(on_actAddFiles()));
     mTreeMenu->addAction(mAddFileAction);
 
-    mDltNodeAction = new QAction("删除节点", this);
+    mDltNodeAction = new QAction(u8"删除节点", this);
     connect(mDltNodeAction,SIGNAL(triggered()),this, SLOT(on_actDeleteItem()));
     mTreeMenu->addAction(mDltNodeAction);
 
@@ -236,7 +306,7 @@ void MainWindow::initTree()
     QTreeWidgetItem *item=new QTreeWidgetItem(MainWindow::itTopItem); //新建节点时设定类型为 itTopItem
 
     //item->setIcon(MainWindow::colItem,icon); //设置第1列的图标
-    item->setText(MainWindow::colItem,"图片管理"); //设置第1列的文字
+    item->setText(MainWindow::colItem,u8"图片管理"); //设置第1列的文字
     item->setText(MainWindow::colItemType,"type=itTopItem");  //设置第2列的文字
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsAutoTristate);
     item->setCheckState(colItem,Qt::Checked);//设置为选中

@@ -46,7 +46,67 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QListWidget" name="listWidget"/>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab_1">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <attribute name="title">
+         <string>ListWidget</string>
+        </attribute>
+        <widget class="QListWidget" name="listWidget">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>90</y>
+           <width>256</width>
+           <height>192</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
+         <string>Table Widget</string>
+        </attribute>
+        <widget class="QTableWidget" name="tableWidget">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>110</y>
+           <width>256</width>
+           <height>192</height>
+          </rect>
+         </property>
+         <column>
+          <property name="text">
+           <string>序号</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>姓名</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>性别</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>年龄</string>
+          </property>
+         </column>
+        </widget>
+       </widget>
+      </widget>
      </item>
     </layout>
    </widget>

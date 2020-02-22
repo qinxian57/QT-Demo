@@ -48,6 +48,10 @@ public:
     void changeEvent(QEvent * event);
     void initTreeMenu();
 
+    bool CheckAppStatus(const QString &appName);
+    void StartApp(const QString &appName);
+    void KillApp(const QString &appName);
+
 private slots:
     void on_showMainAction();
     void on_exitAppAction();
