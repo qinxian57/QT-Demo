@@ -49,7 +49,9 @@ MainWindow::MainWindow(QWidget *parent) :
         KillApp(appName);
     }
     else{
-        StartApp(appName);
+        const QString &appPath = "C:/Demo1.exe";
+
+        StartApp(appPath);
     }
     //qDebug(u8"退出");
 
@@ -99,6 +101,25 @@ void MainWindow::StartApp(const QString &appName)       //name可以是程序名
 
 #endif
 
+    /*
+    QProcess *p = new QProcess;
+
+    p->start("d:\a b\test.exe");
+
+    因为ab之间有空格, test.exe不会被调用.
+
+    网上找了些办法, 比如用p->startDetached("d:\a b\test.exe");
+
+    虽然可以调用test.exe, 但无法用p->state()判断test.exe的进程状态, 比如是否正在运行.
+
+    最终从外网找到终极解决办法, 简单实用.
+
+    先用QDir::setCurrent("d:\a b\test.exe")将当前目录设置到外部执行文件目录
+
+    然后直接使用 p->start("test.exe").
+
+    必要的话, 再把目录设回来: QDir::setCurrent(QApplication::applicationDirPath())
+    */
 }
 
 void MainWindow::KillApp(const QString& appName)
@@ -449,7 +470,7 @@ void MainWindow::initList()
 
     QListWidgetItem *add_item = new QListWidgetItem(ui->listWidget);
     add_item->setIcon(QIcon(":/images/tray_icon.png"));
-    add_item->setText(tr("Add"));
+    add_item->setText("Add");
     //设置item项中的文字位置
     add_item->setTextAlignment(Qt::AlignHCenter);
     add_item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
@@ -474,17 +495,17 @@ void MainWindow::initList()
     //有两种方法在ListWidget中添加item
     //一种在构造item的时候，指定其父Widget
     QListWidgetItem *cubby_item = new QListWidgetItem(QIcon(":/images/tray_icon.png"),
-                                                      tr("Cubby"),ui->listWidget);
+                                                      "Cubby",ui->listWidget);
     //第二种方法是在构造完item后，使用QListWidget::additem()来添加item
     QListWidgetItem *dropbox_item = new QListWidgetItem();
     dropbox_item->setIcon(QIcon(":/images/tray_icon.png"));
-    dropbox_item->setText(tr("Dropbox"));
+    dropbox_item->setText("Dropbox");
     ui->listWidget->addItem(dropbox_item);
 
 
     //向QListWidget中指定的位置插入itemm，使用QListWidget::addItem()
     QListWidgetItem *google_item = new QListWidgetItem(QIcon(":/images/tray_icon.png"),
-                                                         tr("Google"));
+                                                         "Google");
     ui->listWidget->insertItem(1,google_item);
 
 
@@ -525,13 +546,13 @@ void MainWindow::initList()
 
 
     QListWidgetItem *computer_item = new QListWidgetItem();
-    QString str(tr("Computer"));
+    QString str("Computer");
     computer_item->setData(Qt::DisplayRole,str);
     computer_item->setIcon(QIcon(":/images/tray_icon.png"));
     ui->listWidget->addItem(computer_item);
 
 
-    //auto button = new QPushButton>(tr("Button"));
+    //auto button = new QPushButton>("Button");
     QPointer<QPushButton> button = new QPushButton();
     QListWidgetItem *button_item = new QListWidgetItem();
     ui->listWidget->addItem(button_item);
