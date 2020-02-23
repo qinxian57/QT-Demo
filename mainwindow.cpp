@@ -24,17 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setCentralWidget(ui->tabWidget);
     ui->dockWidget->setWidget(ui->treeFiles);
 
-    QWidget * widget=new QWidget(ui->listWidget);               //待放置到tabWidget中的控件
-
-                      QHBoxLayout *layout=new QHBoxLayout();     //包裹控件的布局
-
-                      layout->setContentsMargins(0,0,0,0);
-
-                      layout->addWidget(widget);
-
-
-                     ui->tab_1->setLayout(layout);
-
 
     //Tree Widget
     initTree();
@@ -46,14 +35,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     const QString &appName = "Demo1.exe";
     if(CheckAppStatus(appName)){
-        KillApp(appName);
+        //KillApp(appName);
     }
     else{
-        const QString &appPath = "C:/Demo1.exe";
-
+        const QString &appPath = "C:\\Qt Projects\\Demo1.exe";
         StartApp(appPath);
     }
     //qDebug(u8"退出");
+
+//    QProcess p;
+//    p.start("cmd", QStringList()<<"/c"<<"ping www.baidu.com");
+//    p.waitForStarted();
+//    p.waitForFinished();
+//    QString strTemp=QString::fromLocal8Bit(p.readAllStandardOutput());
+
+//    QMessageBox testMassage;
+//    testMassage.setText(strTemp);
+//    testMassage.exec();
 
 //    //更改窗口菜单栏样式
 //    QFont font("consolas", 10, QFont::Normal);
@@ -66,6 +64,7 @@ MainWindow::~MainWindow()
     ui->treeFiles->clear();
     ui->listWidget->clear();
     delete ui;
+
 }
 
 bool MainWindow::CheckAppStatus(const QString &appName)
@@ -94,32 +93,29 @@ void MainWindow::StartApp(const QString &appName)       //name可以是程序名
 {
 
 #ifdef Q_OS_WIN
-
-    QProcess process;
-    process.start(QString("\"%1\"").arg(appName));
-    process.close();
+    std::shared_ptr<QProcess> process = std::make_shared<QProcess>();
+    mProcessList.push_back(process);
+    process->start(QString("\"%1\"").arg(appName));
+    //process->start(QString("\"%1\"").arg(appName), QStringList(QString("\"%1\"").arg(appName)));
+    process->waitForStarted(5000);
+    //process.close();
 
 #endif
 
-    /*
-    QProcess *p = new QProcess;
+    if(mProcessList.size() > 0){
+        QMessageBox testMassage;
+        testMassage.setText(u8"数组不为空");
+        testMassage.exec();
+    }
+    else{
+        QMessageBox testMassage;
+        testMassage.setText(u8"数组为空");
+        testMassage.exec();
+    }
 
-    p->start("d:\a b\test.exe");
+    //QDir::setCurrent("d:\a b\test.exe")将当前目录设置到外部执行文件目录
+    //QDir::setCurrent(QApplication::applicationDirPath())
 
-    因为ab之间有空格, test.exe不会被调用.
-
-    网上找了些办法, 比如用p->startDetached("d:\a b\test.exe");
-
-    虽然可以调用test.exe, 但无法用p->state()判断test.exe的进程状态, 比如是否正在运行.
-
-    最终从外网找到终极解决办法, 简单实用.
-
-    先用QDir::setCurrent("d:\a b\test.exe")将当前目录设置到外部执行文件目录
-
-    然后直接使用 p->start("test.exe").
-
-    必要的话, 再把目录设回来: QDir::setCurrent(QApplication::applicationDirPath())
-    */
 }
 
 void MainWindow::KillApp(const QString& appName)
@@ -133,6 +129,9 @@ void MainWindow::KillApp(const QString& appName)
 
     if(-2 == result){
         QMessageBox::information(this, u8"提示", appName + u8" 无法关闭");
+    }
+    else if(1 == result){
+        QMessageBox::information(this, u8"提示", appName + u8" 关闭失败");
     }
 
 #endif

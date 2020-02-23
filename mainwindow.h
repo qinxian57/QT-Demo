@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
+#include <QProcess>
 
 #include <QTreeWidgetItem>
 #include <QListWidgetItem>
@@ -36,6 +37,8 @@ public:
     QPointer<QMenu> mMenu;
     QPointer<QAction> mShowMainAction;
     QPointer<QAction> mExitAppAction;
+
+    std::vector<std::shared_ptr<QProcess>> mProcessList;
 
     QPointer<QMenu> mTreeMenu;
     QPointer<QAction> mAddFolderAction;
