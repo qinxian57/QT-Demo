@@ -10,6 +10,7 @@
 #include <QAction>
 #include <QIcon>
 #include <QProcess>
+#include <memory>
 
 #include <QTreeWidgetItem>
 #include <QListWidgetItem>
@@ -50,10 +51,6 @@ public:
     void closeEvent ( QCloseEvent * e );
     void changeEvent(QEvent * event);
     void initTreeMenu();
-
-    bool CheckAppStatus(const QString &appName);
-    void StartApp(const QString &appName);
-    void KillApp(const QString &appName);
 
 private slots:
     void on_showMainAction();

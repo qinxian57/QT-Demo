@@ -26,10 +26,12 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    mmQProcess.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    mmQProcess.h
 
 FORMS += \
         mainwindow.ui

@@ -7,7 +7,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QProcess>
-#include <QHBoxLayout>
+#include "mmQProcess.h"
 
 
 
@@ -33,13 +33,32 @@ MainWindow::MainWindow(QWidget *parent) :
     //List Widget
     initList();
 
+
+
+#if defined(Q_OS_WIN)
     const QString &appName = "Demo1.exe";
-    if(CheckAppStatus(appName)){
-        //KillApp(appName);
+    const QString &appPath = "C:\\Qt Projects\\Demo1.exe";
+
+#elif defined(Q_OS_LINUX)
+    const QString &appName = "Demo1";
+    const QString &appPath = "/home/xiaochen/GHQCpp/Demo1/Demo1";
+#endif
+
+    if(CQProcess::CheckAppStatus(appName)){
+        int result = CQProcess::KillApp(appName);
+        if(-2 == result){
+            QMessageBox::information(this, u8"提示", appName + u8" 无法关闭");
+        }
+        else if(1 == result){
+            QMessageBox::information(this, u8"提示", appName + u8" 关闭失败");
+        }
+        else if(0 == result){
+            QMessageBox::information(this, u8"提示", appName + u8" 关闭 ok");
+        }
     }
     else{
-        const QString &appPath = "C:\\Qt Projects\\Demo1.exe";
-        StartApp(appPath);
+        std::shared_ptr<QProcess> ps = CQProcess::StartApp(appPath, false);
+        mProcessList.push_back(ps);
     }
     //qDebug(u8"退出");
 
@@ -64,77 +83,6 @@ MainWindow::~MainWindow()
     ui->treeFiles->clear();
     ui->listWidget->clear();
     delete ui;
-
-}
-
-bool MainWindow::CheckAppStatus(const QString &appName)
-{
-#ifdef Q_OS_WIN      //表示如果在windows下
-    QProcess process;
-    process.start("TASKLIST" ,QStringList()<<"/FI"<<"imagename eq " +appName);   //执行tasklist程序
-    process.waitForFinished(5000);    //阻塞5秒等待tasklist程序执行完成，超过五秒则直接返回
-    QString outputStr = QString::fromLocal8Bit(process.readAllStandardOutput()); //把tasklist程序读取到的进程信息输出到字符串中
-    if(outputStr.contains(appName))
-    {
-        process.close(); //用完记得把process关闭了，否则如果重新调用这个函数可以会失败
-        return true;
-    }
-    else
-    {
-
-        process.close();
-        return false;
-    }
-#endif
-}
-
-void MainWindow::StartApp(const QString &appName)       //name可以是程序名也可以程序所在的完整路径（如：C:\myapp.exe)
-
-{
-
-#ifdef Q_OS_WIN
-    std::shared_ptr<QProcess> process = std::make_shared<QProcess>();
-    mProcessList.push_back(process);
-    process->start(QString("\"%1\"").arg(appName));
-    //process->start(QString("\"%1\"").arg(appName), QStringList(QString("\"%1\"").arg(appName)));
-    process->waitForStarted(5000);
-    //process.close();
-
-#endif
-
-    if(mProcessList.size() > 0){
-        QMessageBox testMassage;
-        testMassage.setText(u8"数组不为空");
-        testMassage.exec();
-    }
-    else{
-        QMessageBox testMassage;
-        testMassage.setText(u8"数组为空");
-        testMassage.exec();
-    }
-
-    //QDir::setCurrent("d:\a b\test.exe")将当前目录设置到外部执行文件目录
-    //QDir::setCurrent(QApplication::applicationDirPath())
-
-}
-
-void MainWindow::KillApp(const QString& appName)
-{
-
-#ifdef Q_OS_WIN
-    QProcess process;
-    QString command="TASKKILL /IM " + appName + " /F";
-    int result = process.execute(command);                 //execute执行后会一直阻塞到返回外部程序退出的代码，比如无法关闭会返回-2
-    process.close();
-
-    if(-2 == result){
-        QMessageBox::information(this, u8"提示", appName + u8" 无法关闭");
-    }
-    else if(1 == result){
-        QMessageBox::information(this, u8"提示", appName + u8" 关闭失败");
-    }
-
-#endif
 
 }
 
