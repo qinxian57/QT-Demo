@@ -8,6 +8,7 @@
 #include <QString>
 #include <QProcess>
 #include "mmQProcess.h"
+#include "public.h"
 
 
 
@@ -21,9 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
     initTrayIcon();
 
     //左侧停靠窗口 Dock Widget, Tree Widget, List Widget
-    this->setCentralWidget(ui->tabWidget);
+    this->setCentralWidget(ui->tableWidget);
     ui->dockWidget->setWidget(ui->treeFiles);
-
+    ui->dockWidget_2->setWidget(ui->listWidget);
+    //表列随着表格变化而自适应变化
+    //ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    //表行随着表格变化而自适应变化
+    //ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::Stretch);
 
     //Tree Widget
     initTree();
@@ -60,7 +65,43 @@ MainWindow::MainWindow(QWidget *parent) :
         std::shared_ptr<QProcess> ps = CQProcess::StartApp(appPath, false);
         mProcessList.push_back(ps);
     }
-    //qDebug(u8"退出");
+
+
+    std::wstring filepath = L"c:\\Qt Projects\\Demo1.exe";
+    //COleDateTime tempModifyTime, tempCreateTime;
+    GlobalGetFileTime(filepath);
+
+    //可以测试的属性
+    /*
+    CompanyName
+    FileDescription
+    FileVersion
+    InternalName
+    LegalCopyright
+    OriginalFilename
+    ProductName
+    ProductVersion
+    Comments
+    LegalTrademarks
+    PrivateBuild
+    SpecialBuild
+    */
+    /*
+    std::string str1 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"CompanyName");
+    std::string str2 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"FileDescription");
+    std::string str3 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"FileVersion");
+    std::string str4 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"InternalName");
+    std::string str5 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"LegalCopyright");
+    std::string str6 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"OriginalFilename");
+    std::string str7 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"ProductName");
+    std::string str8 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"ProductVersion");
+    std::string str9 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"Comments");
+    std::string str10 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"LegalTrademarks");
+    std::string str11 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"PrivateBuild");
+    std::string str12 = GetFileVersion(L"C:\\Ruby25-x64\\bin\\ruby.exe", L"SpecialBuild");
+
+    qDebug(u8"退出");
+    */
 
 //    QProcess p;
 //    p.start("cmd", QStringList()<<"/c"<<"ping www.baidu.com");
@@ -103,6 +144,9 @@ void MainWindow::initTrayIcon()
 
     //建立托盘操作的菜单
     createTrayActions();
+
+    //显示
+    mSysTrayIcon->show();
 }
 
 void MainWindow::createTrayActions()
@@ -171,9 +215,8 @@ void MainWindow::on_activatedSysTrayIcon(QSystemTrayIcon::ActivationReason reaso
 void MainWindow::on_showMainAction()
 {
     //this->activateWindow();
-
-    this->show();
     this->setWindowState(Qt::WindowActive);
+    this->show();
 }
 
 /*
