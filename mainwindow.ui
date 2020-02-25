@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>595</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -42,9 +42,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>90</y>
-      <width>256</width>
-      <height>192</height>
+      <y>1</y>
+      <width>411</width>
+      <height>321</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -176,7 +176,7 @@
     <set>Qt::LeftDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>TreeWidget</string>
+    <string>设备库</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -200,10 +200,10 @@
     <widget class="QTreeWidget" name="treeFiles">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>20</y>
+       <x>20</x>
+       <y>10</y>
        <width>211</width>
-       <height>371</height>
+       <height>231</height>
       </rect>
      </property>
      <property name="baseSize">
@@ -260,9 +260,9 @@
     <widget class="QListWidget" name="listWidget">
      <property name="geometry">
       <rect>
-       <x>160</x>
+       <x>20</x>
        <y>10</y>
-       <width>431</width>
+       <width>661</width>
        <height>81</height>
       </rect>
      </property>
