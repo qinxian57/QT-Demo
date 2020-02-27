@@ -1,9 +1,31 @@
 #include "mmQProcess.h"
 
+
+#ifdef WIN32
+#include<windows.h>
+#include <shellapi.h>
+#else
+#include <unistd.h>
+#endif // !WIN32
+
 CQProcess::CQProcess()
 {
 
 }
+/*
+ * ShellExecute and system of Linux
+*/
+int CQProcess::StartApp(const std::wstring FileName)
+{
+#ifdef WIN32
+    ShellExecute(nullptr, L"open", FileName.c_str(), nullptr, nullptr, SW_SHOW);
+
+#else
+    system(FileName);
+#endif
+    return 0;
+}
+
 
 bool CQProcess::CheckAppStatus(const QString &appName)
 {
@@ -90,3 +112,5 @@ int CQProcess::KillApp(const QString &appName)
 
 
 }
+
+

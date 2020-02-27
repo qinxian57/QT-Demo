@@ -25,10 +25,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setCentralWidget(ui->tableWidget);
     ui->dockWidget->setWidget(ui->treeFiles);
     ui->dockWidget_2->setWidget(ui->listWidget);
-    //表列随着表格变化而自适应变化
-    //ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    //表行随着表格变化而自适应变化
-    //ui->tableWidget->verticalHeader()->setResizeMode(QHeaderView::Stretch);
 
     //Tree Widget
     initTree();
@@ -39,7 +35,15 @@ MainWindow::MainWindow(QWidget *parent) :
     initList();
 
 
+#ifdef WIN32
+    std::wstring appPath = L"C:\\Qt Projects\\Demo1.exe";
+#else
+    std::wstring appPath = L"/home/xiaochen/GHQCpp/Demo1/Demo1";
+#endif
+    int res = CQProcess::StartApp(appPath);
 
+
+/*
 #if defined(Q_OS_WIN)
     const QString &appName = "Demo1.exe";
     const QString &appPath = "C:\\Qt Projects\\Demo1.exe";
@@ -65,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
         std::shared_ptr<QProcess> ps = CQProcess::StartApp(appPath, false);
         mProcessList.push_back(ps);
     }
-
+*/
 
     std::wstring filepath = L"c:\\Qt Projects\\Demo1.exe";
     //COleDateTime tempModifyTime, tempCreateTime;
