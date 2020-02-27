@@ -6,11 +6,6 @@
 #include <fstream>
 //#include <atltime.h>
 #include <ATLComTime.h>
-//#include "util.h"
-//#include "json.h"
-
-//extern TCHAR g_ComputerName[_MAX_PATH];
-//extern int g_SecondFrameValue;
 
 #define SECSPERDAY 86400LL /* one day seconds */
 #define SECS_1601_TO_1970 ((369LL * 365LL + 89LL) * (ULONGLONG)SECSPERDAY)/* 1601 to 1970 is 369 years plus 89 leap days */

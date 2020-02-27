@@ -29,50 +29,29 @@ int CQProcess::StartApp(const std::wstring FileName)
 
 bool CQProcess::CheckAppStatus(const QString &appName)
 {
+
+    QProcess process;
+
 #if defined(Q_OS_WIN)      //表示如果在windows下
-
-    QProcess process;
     process.start("TASKLIST" ,QStringList()<<"/FI"<<"imagename eq " +appName);   //执行tasklist程序
-    process.waitForFinished(5000);    //阻塞5秒等待tasklist程序执行完成，超过五秒则直接返回
-    QString outputStr = QString::fromLocal8Bit(process.readAllStandardOutput()); //把tasklist程序读取到的进程信息输出到字符串中
-    if(outputStr.contains(appName))
-    {
-        process.close(); //用完记得把process关闭了，否则如果重新调用这个函数可以会失败
-        return true;
-    }
-    else
-    {
-        process.close();
-        return false;
-    }
-
-
 #elif defined(Q_OS_LINUX)
-
-    QProcess process;
-    //connect(&process,SIGNAL(readyReadStandardOutput()),this,SLOT(readProcessStandardOutput(process)));
-
-    QStringList args;
-    args<<"-c";
-    args<<"ps | grep " + appName;
-    //process.start("sh",args);
     process.start("sh", QStringList()<<"-c"<<"ps | grep "+appName);
-
-    process.waitForFinished(5000);    //阻塞5秒等待执行完成，超过五秒则直接返回
-    QString outputStr = QString::fromLocal8Bit(process.readAllStandardOutput()); //把读取到的进程信息输出到字符串中
-    if(outputStr.contains(appName))
-    {
-        process.close(); //用完记得把process关闭了，否则如果重新调用这个函数可以会失败
-        return true;
-    }
-    else
-    {
-        process.close();
-        return false;
-    }
-
 #endif
 
+    process.waitForFinished(5000);    //阻塞5秒等待tasklist程序执行完成，超过五秒则直接返回
+    QString outputStr = QString::fromLocal8Bit(process.readAllStandardOutput()); //把tasklist程序读取到的进程信息输出到字符串中
+    //if(outputStr.contains(appName))
+    bool ee = outputStr.contains(appName);
+    if(ee)
+    {
+        process.close();
+        return true;
+    }
+    else
+    {
+        process.close();
+        return false;
+    }
 }
 
 std::shared_ptr<QProcess> CQProcess::StartApp(const QString &appPath, const bool isDetach)       //name可以是程序名也可以程序所在的完整路径
@@ -109,8 +88,6 @@ int CQProcess::KillApp(const QString &appName)
     process.close();
 
     return result;
-
-
 }
 
 
